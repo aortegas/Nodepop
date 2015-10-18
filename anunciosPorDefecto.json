@@ -1,0 +1,18 @@
+{
+  "anuncios": [
+    {
+      "nombre": "Climbing Rope",
+      "venta": true,
+      "precio": 175.15,
+      "foto": "rope1.jpeg",
+      "tags": [ "lifestyle"]
+    },
+    {
+      "nombre": "iPad Air 2 128GB",
+      "venta": false,
+      "precio": 500.00,
+      "foto": "iPadAir2.jpeg",
+      "tags": [ "work", "mobile"]
+    }
+  ]
+}

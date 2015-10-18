@@ -1,0 +1,134 @@
+#!/usr/bin/env node
+
+//**
+//* Dependencias modulos.
+//**
+
+// Igual que en WWW obtenemos referencia al app.js.
+var app = require('../app');
+
+// Igual que en WWW, lo utilizamos para mostar información en la consola.
+// Ver funcion onListening mas abajo.
+var debug = require('debug')('nodepop:server');
+
+// Igual que en WWW, lo utilizamos para crear el server.
+var http = require('http');
+
+// Igual que en WWW, obtenemos el puerto de escucha. Ver funcion normalizePort mas abajo.
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+
+//**
+//*  Inicio de control de cluster.
+//**
+
+// Obtenemos el objeto cluster.
+var cluster = require('cluster');
+
+// Si somos el proceso master, creamos los workers en funcion de los cores que tengamos.
+if (cluster.isMaster) {
+
+    // Nos suscribimos primero a los eventos que nos puede devolver cluster, cuando vayamos creando los
+    // workers.
+
+    // Nos suscribimos al evento: online, el cual nos indicara cuando arranca un worker.
+    cluster.on('online', function(worker) {
+        console.log('Worker ' + worker.id + ' esta online con pid ' + worker.process.pid);
+    });
+
+    // Nos suscribimos al evento: listening, el cual nos indicara cuando esta escuchando un worker.
+    cluster.on('listening', function(worker, address) {
+        console.log('Worker ' + worker.id + ' con pid ' + worker.process.pid + ' esta ahora escuchando en el puerto ' + address.port);
+    });
+
+    // Nos suscribimos al evento: exit, el cual nos indicara cuando termina un worker. Ante lo cual, creamos
+    // otro que lo sustituya.
+    cluster.on('exit', function(worker, code, signal) {
+        console.log('Worker ' + worker.process.pid + ' termino con codigo: ' + code + ', y signal: ' + signal);
+        console.log('Empezando un nuevo worker');
+        cluster.fork();
+    });
+
+    // Nos suscribimos al evento:disconnect, el cual nos indicara cuando un worker se ha desconectado.
+    cluster.on('disconnect', function(worker) {
+        console.log('El worker #' + worker.id + ' fue desconectado');
+    });
+
+    // Obtenemos el número de cores que tenemos.
+    var numCPUs = require('os').cpus().length;
+    console.log('Starting cluster for ' + numCPUs + ' cpus...');
+
+    // Creamos los workers en funcion del numero de cores que tenemos.
+    for (var i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+} else {
+
+    // Si no es el master, arranque normal del servidor igual que se hace en WWW.
+    // Obtenemos el server http.
+    var server = http.createServer(app);
+
+    // Le indicamos al server el puerto de escucha y le asociamos las funciones a los eventos onError y onListening.
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+
+}
+
+//**
+//*  Inicio de control de cluster.
+//**
+
+
+// Igual que WWW, obtiene como numero, string o false el puerto de escucha.
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
+
+// Igual que WWW, función que se ejecuta con el evento onError de cualquier error en el servidor y lo gestiona.
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+// Igual que WWW, función que se ejecuta con el evento onListening que nos avisa de que el server esta escuchando.
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind + ' (env: ' + app.get('env') + ')');
+}
