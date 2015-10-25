@@ -58,10 +58,12 @@ app.use(function(req, res, next) {
 // Manejador de errores en desarrollo.
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
+
       res.status(err.status || 500);
 
       // Capturamos en el error si este vino de la api, devolvemos JSON.
-      if (req.path.match(/\/apiv1.0.0\d+/)) {
+      if (req.path.match(/apiv1.0.0/)) {
+
            return res.json({
                 ok: false,
                 error: {code: err.status || 500, message: err.message, err: err}
@@ -80,7 +82,8 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
 
     // Capturamos en el error si este vino de la api, devolvemos JSON.
-    if (req.path.match(/\/apiv1.0.0\d+/)) {
+    if (req.path.match(/apiv1.0.0/)) {
+
         return res.json({
             ok: false,
             error: {code: err.status || 500, message: err.message, err: err}
