@@ -61,7 +61,7 @@ if (app.get('env') === 'development') {
       res.status(err.status || 500);
 
       // Capturamos en el error si este vino de la api, devolvemos JSON.
-      if (req.path.match(/\/apiV\d+/)) {
+      if (req.path.match(/\/apiv1.0.0\d+/)) {
            return res.json({
                 ok: false,
                 error: {code: err.status || 500, message: err.message, err: err}
@@ -80,7 +80,7 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
 
     // Capturamos en el error si este vino de la api, devolvemos JSON.
-    if (req.path.match(/\/apiV\d+/)) {
+    if (req.path.match(/\/apiv1.0.0\d+/)) {
         return res.json({
             ok: false,
             error: {code: err.status || 500, message: err.message, err: err}

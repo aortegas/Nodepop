@@ -3,13 +3,19 @@
 Api for the selling and buying items.
 
 
+## Instancia Practica de DevOps
+    younodepop.cloudapp.net
+
+
 
 ## Deploy
 ### Install dependencies  
     npm install
 
 ### Configure  
-Review lib/db.js to set database configuration
+    Review lib/db.js to set database configuration.
+    Dev.: mongoose.connect('mongodb://localhost/Nodepop');
+    Prod.: mongoose.connect('mongodb://<dbuser>:<dbuserPassword>@localhost:27017/Nodepop');
 
 ### Init & Preloaded database
     bin/mongod --dbpath ./data/db
@@ -43,7 +49,8 @@ To start a single instance in debug mode:
 ### Base Path
 
 The API can be used with the path: 
-[API V1](/apiv1.0.0/)
+[/apiv1.0.0](/apiv1.0.0)
+
 
 ### Security
 
@@ -57,21 +64,24 @@ Next calls will need to have the token in:
 - Body: { token: eyJ0eXAiO... }
 - Query string: ?token=eyJ0eXAiO...
 
+
 ### Language
 
 All requests that return error messages are localized to english, if you want to 
 change language make the request with the header x-lang set to other language, 
 i.e. x-lang: es 
 
+
 ### Error example
 
-    {
-      "ok": false,
-      "error": {
-        "code": 401,
-        "message": "Authentication failed. Wrong password."
-      }
+{
+"ok": false,
+"error": {
+    "code": 401,
+    "message": "Authentication failed. Wrong password."
     }
+}
+
 
 ### POST /usuarios/register
 
@@ -79,10 +89,11 @@ i.e. x-lang: es
 
 **Result:** 
 
-    {
-      "ok": true, 
-      "message": "user created!"
-    }
+{
+    "ok": true, 
+    "message": "user created!"
+}
+
 
 ### POST /usuarios/authenticate
 
@@ -90,10 +101,11 @@ i.e. x-lang: es
 
 **Result:** 
 
-    {
-      "ok": true, 
-      "token": "..."
-    }
+{
+    "ok": true, 
+    "token": "..."
+}
+
 
 ### GET /anuncios
 
@@ -112,26 +124,27 @@ Input query example: ?start=0&limit=2&sort=precio&includeTotal=true&tag=mobile&v
 
 **Result:** 
 
-    {
-      "ok": true,
-      "result": {
+{
+    "ok": true,
+    "result": {
         "rows": [
-          {
-            "_id": "55fd9abda8cd1d9a240c8230",
-            "nombre": "iPhone 3GS",
-            "venta": false,
-            "precio": 50,
-            "foto": "/images/anuncios/iphone.png",
-            "__v": 0,
-            "tags": [
-              "lifestyle",
-              "mobile"
-            ]
-          }
+            {
+                "_id": "55fd9abda8cd1d9a240c8230",
+                "nombre": "iPad Air 2 128GB",
+                "venta": false,
+                "precio": 500,
+                "foto": "/images/anuncios/iPadAir2.jpeg",
+                "__v": 0,
+                "tags": [
+                    "work",
+                    "mobile"
+                ]
+            }
         ],
         "total": 1
-      }
     }
+}
+
 
 ### GET /anuncios/tags
 
@@ -139,15 +152,16 @@ Return the list of available tags for the resource anuncios.
 
 **Result:** 
 
-    {
-      "ok": true,
-      "allowed_tags": [
+{
+    "ok": true,
+    "allowed_tags": [
         "work",
         "lifestyle",
         "motor",
         "mobile"
-      ]
-    }
+    ]
+}
+
 
 ### POST /pushtokens
 
@@ -158,14 +172,14 @@ plataforma can be 'ios' or 'android'
 
 **Result:** 
 
-    {
-      "ok": true,
-      "created": {
+{
+    "ok": true,
+    "created": {
         "__v": 0,
         "token": "123456",
         "usuario": "560ad58ff82387259adbf26c",
         "plataforma": "android",
         "createdAt": "2015-09-30T21:01:19.955Z",
         "_id": "560c4b648b892ca73faac308"
-      }
     }
+}
